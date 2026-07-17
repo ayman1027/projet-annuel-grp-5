@@ -1,7 +1,7 @@
 # Auteur : Messali Ayman
 # Serveur Flask qui expose nos modeles Rust via une API
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import ctypes
 import os
 import numpy as np
@@ -35,6 +35,11 @@ def image_vers_pixels(image_bytes, taille=(32, 32)):
     img = Image.open(io.BytesIO(image_bytes)).convert("L").resize(taille)
     pixels = np.array(img, dtype=np.float32).flatten() / 255.0
     return pixels
+
+# Page web principale
+@app.route("/app", methods=["GET"])
+def interface():
+    return render_template("index.html")
 
 # Route de test
 @app.route("/", methods=["GET"])

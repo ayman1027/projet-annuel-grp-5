@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Classification d'Images - Projet ML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        h1 { color: #333; text-align: center; }
+        .zone-upload {
+            background: white;
+            border: 2px dashed #aaa;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        input[type="file"] { margin: 10px 0; }
+        select, button {
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            font-size: 16px;
+        }
+        button:hover { background: #45a049; }
+        #resultat {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+        #prediction {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+        #score { color: #666; margin-top: 10px; }
+        #apercu { max-width: 300px; margin: 10px auto; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<h1>Classification d'Images</h1>
+<p style="text-align:center">Avion / Voiture — Modeles ML from scratch en Rust</p>
+
+<div class="zone-upload">
+    <p>Selectionne une image et un modele</p>
+    <input type="file" id="image" accept="image/*"><br>
+    <select id="modele">
+        <option value="pmc">PMC (Perceptron Multi-Couches)</option>
+        <option value="lineaire">Modele Lineaire</option>
+    </select><br>
+    <button onclick="classifier()">Classifier</button>
+</div>
+
+<div id="resultat">
+    <img id="apercu" src="" alt="image">
+    <div id="prediction"></div>
+    <div id="score"></div>
+</div>
+
+<script>
+    async function classifier() {
+        const fichier = document.getElementById("image").files[0];
+        const modele = document.getElementById("modele").value;
+
+        if (!fichier) {
+            alert("Selectionne une image d abord");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", fichier);
+
+        const reponse = await fetch(`/predict/${modele}`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await reponse.json();
+
+        document.getElementById("apercu").src = URL.createObjectURL(fichier);
+        document.getElementById("prediction").textContent = data.prediction.toUpperCase();
+        document.getElementById("score").textContent = `Score : ${data.score.toFixed(3)}`;
+        document.getElementById("resultat").style.display = "block";
+    }
+</script>
+</body>
+</html>

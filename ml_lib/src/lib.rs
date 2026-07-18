@@ -1,15 +1,18 @@
-// Point d'entrée de la bibliothèque Rust on déclare les modules et on les rend accessibles depuis Python
+// Point d entree de la lib Rust
+// Je declare les modules et je les rends accessibles depuis Python
 mod models;
 
 pub use models::linear_model::*;
 pub use models::pmc::*;
+pub use models::rbfn::*;
 
-#[no_mangle]
-pub extern "C" fn addition(a: i32, b: i32) -> i32 {
+// Fonctions de test pour valider que la tuyauterie Rust/Python fonctionne
+#[unsafe(no_mangle)]
+extern "C" fn addition(a: i32, b: i32) -> i32 {
     a + b
 }
 
-#[no_mangle]
-pub extern "C" fn soustraction(a: i32, b: i32) -> i32 {
+#[unsafe(no_mangle)]
+extern "C" fn soustraction(a: i32, b: i32) -> i32 {
     a - b
 }

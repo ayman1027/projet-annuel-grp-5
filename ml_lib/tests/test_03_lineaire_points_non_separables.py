@@ -2,77 +2,65 @@ import ctypes
 import os
 import random
 import math
+import numpy as np
 import matplotlib.pyplot as plt
 
 # Chargement lib Rust
 lib_path = os.path.join(os.path.dirname(__file__), "../target/debug/libml_lib.dylib")
 ml_lib = ctypes.CDLL(lib_path)
 
-ml_lib.create_linear_model.argtypes = [ctypes.c_float]
+ml_lib.create_linear_model.argtypes = [ctypes.c_size_t, ctypes.c_float]
 ml_lib.create_linear_model.restype  = ctypes.c_void_p
-ml_lib.train_step.argtypes = [ctypes.c_void_p, ctypes.c_float, ctypes.c_float, ctypes.c_float]
+ml_lib.train_step.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float), ctypes.c_size_t, ctypes.c_float]
 ml_lib.train_step.restype  = None
+ml_lib.predict.argtypes    = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_float), ctypes.c_size_t]
+ml_lib.predict.restype     = ctypes.c_float
 ml_lib.free_linear_model.argtypes = [ctypes.c_void_p]
 ml_lib.free_linear_model.restype  = None
 
-# Points en cercles — rouges au centre, bleus autour
+# Points en cercles - rouges au centre, bleus autour
 random.seed(42)
 points = []
 
-# 50 points rouges au centre (rayon < 0.5)
 for _ in range(50):
     angle = random.uniform(0, 2 * math.pi)
     rayon = random.uniform(0, 0.5)
-    x1 = rayon * math.cos(angle)
-    x2 = rayon * math.sin(angle)
-    points.append((x1, x2, -1.0))
+    points.append((rayon * math.cos(angle), rayon * math.sin(angle), -1.0))
 
-# 50 points bleus autour (rayon entre 0.7 et 1.0)
 for _ in range(50):
     angle = random.uniform(0, 2 * math.pi)
     rayon = random.uniform(0.7, 1.0)
-    x1 = rayon * math.cos(angle)
-    x2 = rayon * math.sin(angle)
-    points.append((x1, x2, 1.0))
+    points.append((rayon * math.cos(angle), rayon * math.sin(angle), 1.0))
 
-# Entraînement du modèle linéaire
-model = ml_lib.create_linear_model(0.01)
+N = 2
+model = ml_lib.create_linear_model(N, ctypes.c_float(0.01))
+
 for epoch in range(1000):
     random.shuffle(points)
     for (x1, x2, y) in points:
-        ml_lib.train_step(model, x1, x2, y)
+        arr = np.array([x1, x2], dtype=np.float32)
+        x_ptr = arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+        ml_lib.train_step(model, x_ptr, N, ctypes.c_float(y))
 
-# Récupération des poids
-class LinearModel(ctypes.Structure):
-    _fields_ = [("w1", ctypes.c_float), ("w2", ctypes.c_float),
-                ("bias", ctypes.c_float), ("lr", ctypes.c_float)]
-
-m = ctypes.cast(model, ctypes.POINTER(LinearModel))[0]
-
-# Calcul précision — combien de points bien classés ?
 correct = 0
 for (x1, x2, y) in points:
-    prediction = m.w1 * x1 + m.w2 * x2 + m.bias
-    if (prediction >= 0 and y == 1.0) or (prediction < 0 and y == -1.0):
+    arr = np.array([x1, x2], dtype=np.float32)
+    x_ptr = arr.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+    pred = ml_lib.predict(model, x_ptr, N)
+    if (pred >= 0 and y == 1.0) or (pred < 0 and y == -1.0):
         correct += 1
-accuracy = correct / len(points) * 100
-print(f"Précision modèle linéaire : {accuracy:.1f}%")
-print("→ Le modèle linéaire échoue car une droite ne peut pas séparer des cercles")
 
-# Affichage
+accuracy = correct / len(points) * 100
+print(f"Precision modele lineaire : {accuracy:.1f}%")
+print("Le modele lineaire echoue car une droite ne peut pas separer des cercles")
+
 fig, ax = plt.subplots(figsize=(7, 7))
 for (x1, x2, y) in points:
     ax.scatter(x1, x2, color="blue" if y == 1.0 else "red", s=30)
 
-x_vals = [-1.5, 1.5]
-if abs(m.w2) > 0.0001:
-    y_vals = [(-m.w1 * x - m.bias) / m.w2 for x in x_vals]
-    ax.plot(x_vals, y_vals, 'g-', linewidth=2, label=f"Frontière linéaire (précision={accuracy:.1f}%)")
-
 ax.set_xlim(-1.5, 1.5)
 ax.set_ylim(-1.5, 1.5)
-ax.set_title("Modèle Linéaire — Cas NON linéairement séparable (ÉCHEC)")
-ax.legend()
+ax.set_title(f"Modele Lineaire - Cas NON separable (precision={accuracy:.1f}%)")
 plt.tight_layout()
 plt.show()
 

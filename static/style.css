@@ -1,0 +1,150 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.sous-titre {
+    color: #aaa;
+    margin-bottom: 40px;
+    font-size: 0.95rem;
+}
+
+.carte {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+    border: 1px solid #0f3460;
+}
+
+.zone-upload {
+    border: 2px dashed #0f3460;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.zone-upload:hover {
+    border-color: #e94560;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.btn-upload {
+    background: #0f3460;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+#nom-fichier {
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #0f3460;
+    background: #0f3460;
+    color: white;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #c73652;
+}
+
+#resultat {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    display: none;
+    border: 1px solid #0f3460;
+}
+
+#apercu {
+    max-width: 250px;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    object-fit: cover;
+}
+
+#prediction {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #e94560;
+    margin-bottom: 20px;
+}
+
+.scores {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.score-item {
+    text-align: center;
+}
+
+.score-item .label {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.score-item .valeur {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.score-item.gagnant .valeur {
+    color: #e94560;
+}

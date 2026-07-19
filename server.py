@@ -42,54 +42,46 @@ def image_vers_pixels(image_bytes, taille=(32, 32)):
     pixels = np.array(img, dtype=np.float32).flatten() / 255.0
     return pixels
 
-# Mes 3 classes et mes modeles charges en memoire
 CLASSES = ["avion", "voiture", "bateau"]
 MODELES = {"lineaire": {}, "pmc": {}, "rbfn": {}}
 
-# Je charge les 9 modeles une seule fois au demarrage
-# comme ca je les recharge pas a chaque requete - c est beaucoup plus rapide
 def charger_modeles():
     for classe in CLASSES:
         MODELES["lineaire"][classe] = ml_lib.load_linear_model(f"lineaire_{classe}.bin".encode())
         MODELES["pmc"][classe]      = ml_lib.load_pmc(f"pmc_{classe}.bin".encode())
         MODELES["rbfn"][classe]     = ml_lib.load_rbfn(f"rbfn_{classe}.bin".encode())
-    print(f"Modeles charges : {len(CLASSES)} Lineaires + {len(CLASSES)} PMC + {len(CLASSES)} RBFN")
+    print("Modeles charges", len(CLASSES), "Lineaires +", len(CLASSES), "PMC +", len(CLASSES), "RBFN")
 
-# Pour le PMC et RBFN - je calcule un score par classe et je prends la plus haute
 def predire_pmc_rbfn(type_modele, predict_fn, pixels):
     N = len(pixels)
-    x_ptr = np.ctypeslib.as_ctypes(pixels)
+    point_pour_rust = np.ctypeslib.as_ctypes(pixels)
     scores = []
     for classe in CLASSES:
-        output = np.zeros(1, dtype=np.float32)
-        out_ptr = np.ctypeslib.as_ctypes(output)
-        predict_fn(MODELES[type_modele][classe], x_ptr, N, out_ptr)
-        scores.append(float(output[0]))
+        resultat = np.zeros(1, dtype=np.float32)
+        resultat_pour_rust = np.ctypeslib.as_ctypes(resultat)
+        predict_fn(MODELES[type_modele][classe], point_pour_rust, N, resultat_pour_rust)
+        scores.append(float(resultat[0]))
     classe_predite = CLASSES[scores.index(max(scores))]
     return classe_predite, scores
 
-# Pour le modele lineaire - meme principe OVR mais predict retourne un float directement
 def predire_lineaire(pixels):
     N = len(pixels)
-    x_ptr = np.ctypeslib.as_ctypes(pixels)
+    point_pour_rust = np.ctypeslib.as_ctypes(pixels)
     scores = []
     for classe in CLASSES:
-        score = ml_lib.predict(MODELES["lineaire"][classe], x_ptr, N)
+        score = ml_lib.predict(MODELES["lineaire"][classe], point_pour_rust, N)
         scores.append(float(score))
     classe_predite = CLASSES[scores.index(max(scores))]
     return classe_predite, scores
 
-# La page web du site
 @app.route("/app", methods=["GET"])
 def interface():
     return render_template("index.html")
 
-# Route pour verifier que le serveur tourne
 @app.route("/", methods=["GET"])
 def index():
     return jsonify({"message": "Serveur ML operationnel", "modeles": ["lineaire", "pmc", "rbfn"]})
 
-# Modele lineaire - je montre ses limites sur les vraies images
 @app.route("/predict/lineaire", methods=["POST"])
 def predict_lineaire():
     if "image" not in request.files:
@@ -98,7 +90,6 @@ def predict_lineaire():
     classe_predite, scores = predire_lineaire(pixels)
     return jsonify({"prediction": classe_predite, "score": max(scores), "scores": dict(zip(CLASSES, scores))})
 
-# PMC
 @app.route("/predict/pmc", methods=["POST"])
 def predict_pmc():
     if "image" not in request.files:
@@ -107,7 +98,6 @@ def predict_pmc():
     classe_predite, scores = predire_pmc_rbfn("pmc", ml_lib.pmc_predict, pixels)
     return jsonify({"prediction": classe_predite, "score": max(scores), "scores": dict(zip(CLASSES, scores))})
 
-# RBFN
 @app.route("/predict/rbfn", methods=["POST"])
 def predict_rbfn():
     if "image" not in request.files:

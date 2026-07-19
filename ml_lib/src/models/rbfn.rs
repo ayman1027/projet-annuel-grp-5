@@ -28,8 +28,6 @@ impl RBFN {
         RBFN { input_size, hidden_size, output_size, centers, weights, gamma, lr }
     }
 
-    // Distance normalisee par le nombre de features
-    // Sans normalisation les images 1024 features donnent des distances enormes → exp() = 0
     fn rbf(&self, x: &[f32], center_idx: usize) -> f32 {
         let mut dist = 0.0f32;
         for i in 0..self.input_size {
@@ -119,11 +117,11 @@ extern "C" fn load_rbfn(path: *const i8) -> *mut RBFN {
     let data: Vec<f32> = bytes.chunks(4)
         .map(|b| f32::from_le_bytes(b.try_into().unwrap()))
         .collect();
-    let input_size  = data[0] as usize;
-    let hidden_size = data[1] as usize;
-    let output_size = data[2] as usize;
-    let gamma       = data[3];
-    let lr          = data[4];
+    let input_size   = data[0] as usize;
+    let hidden_size  = data[1] as usize;
+    let output_size  = data[2] as usize;
+    let gamma        = data[3];
+    let lr           = data[4];
     let centers_size = hidden_size * input_size;
     let weights_size = hidden_size * output_size;
     let centers = data[5..5+centers_size].to_vec();

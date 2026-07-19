@@ -2,29 +2,25 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Classification d'images</title>
+    <title>Classification d'Images</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <h1>Classification d'Images</h1>
-<p class="sous-titre">Avion / Voiture / Bateau</p>
+<p>Avion / Voiture / Bateau</p>
 
-<div class="carte">
-    <div class="zone-upload" onclick="document.getElementById('image').click()">
-        <label class="btn-upload">Choisir une image</label>
-        <input type="file" id="image" accept="image/*" onchange="afficherNom()">
-        <p id="nom-fichier">Aucun fichier choisi</p>
-    </div>
+<label class="btn-upload" onclick="document.getElementById('image').click()">Choisir une image</label>
+<input type="file" id="image" accept="image/*" onchange="afficherNom()">
+<p id="nom-fichier">Aucun fichier choisi</p>
 
-    <select id="modele">
-        <option value="lineaire">Modele Lineaire</option>
-        <option value="pmc">PMC</option>
-        <option value="rbfn">RBFN</option>
-    </select>
+<select id="modele">
+    <option value="lineaire">Modele Lineaire</option>
+    <option value="pmc">PMC</option>
+    <option value="rbfn">RBFN</option>
+</select>
 
-    <button onclick="classifier()">Classifier</button>
-</div>
+<button onclick="classifier()">Classifier</button>
 
 <div id="resultat">
     <img id="apercu" src="" alt="image">

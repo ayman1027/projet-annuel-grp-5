@@ -1,150 +1,86 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
     font-family: Arial, sans-serif;
-    background: #1a1a2e;
-    color: #eee;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-}
-
-h1 {
-    font-size: 2rem;
-    margin-bottom: 8px;
-    color: #fff;
-}
-
-.sous-titre {
-    color: #aaa;
-    margin-bottom: 40px;
-    font-size: 0.95rem;
-}
-
-.carte {
-    background: #16213e;
-    border-radius: 12px;
-    padding: 30px;
-    width: 100%;
-    max-width: 500px;
-    margin-bottom: 20px;
-    border: 1px solid #0f3460;
-}
-
-.zone-upload {
-    border: 2px dashed #0f3460;
-    border-radius: 8px;
-    padding: 30px;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
     text-align: center;
-    margin-bottom: 20px;
-    cursor: pointer;
-    transition: border-color 0.2s;
 }
 
-.zone-upload:hover {
-    border-color: #e94560;
-}
+h1 { font-size: 1.8rem; margin-bottom: 5px; }
 
-input[type="file"] {
-    display: none;
-}
+p { color: #555; margin-bottom: 20px; }
+
+input[type="file"] { display: none; }
+
+#nom-fichier { color: #888; font-size: 0.85rem; margin: 10px 0; }
 
 .btn-upload {
-    background: #0f3460;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
     display: inline-block;
-    margin-bottom: 10px;
-}
-
-#nom-fichier {
-    color: #aaa;
-    font-size: 0.85rem;
+    background: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px;
 }
 
 select {
+    display: block;
+    margin: 15px auto;
+    padding: 8px;
     width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #0f3460;
-    background: #0f3460;
-    color: white;
-    margin-bottom: 15px;
-    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    background: #e94560;
+    background: black;
     color: white;
+    padding: 12px 30px;
     border: none;
-    border-radius: 6px;
-    font-size: 1rem;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background 0.2s;
+    font-size: 1rem;
+    margin-top: 10px;
 }
 
-button:hover {
-    background: #c73652;
-}
+button:hover { background: #333; }
 
 #resultat {
-    background: #16213e;
-    border-radius: 12px;
-    padding: 30px;
-    width: 100%;
-    max-width: 500px;
-    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
     display: none;
-    border: 1px solid #0f3460;
 }
 
 #apercu {
-    max-width: 250px;
-    max-height: 200px;
+    max-width: 280px;
     border-radius: 8px;
-    margin-bottom: 20px;
-    object-fit: cover;
+    margin-bottom: 15px;
 }
 
 #prediction {
     font-size: 2rem;
     font-weight: bold;
-    color: #e94560;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .scores {
     display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
+    justify-content: center;
+    gap: 30px;
 }
 
-.score-item {
-    text-align: center;
-}
+.score-item { text-align: center; }
 
 .score-item .label {
-    font-size: 0.8rem;
-    color: #aaa;
+    font-size: 0.85rem;
+    color: #555;
     margin-bottom: 4px;
 }
 
 .score-item .valeur {
     font-size: 1.1rem;
     font-weight: bold;
-    color: #fff;
 }
 
-.score-item.gagnant .valeur {
-    color: #e94560;
-}
+.score-item.gagnant .valeur { color: green; }
